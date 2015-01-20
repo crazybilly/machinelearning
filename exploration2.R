@@ -5,6 +5,10 @@ library(stringr); library(lubridate); library(magrittr);
 
 # data --------------------------------------------
 
+if( !exists('training')) {
+   source('loaddata.R')
+}
+
 
 segment  <- createDataPartition(training$classe,p=.75,list=F)
 
