@@ -19,6 +19,8 @@ modelrf  <- train(classe ~ ., data = training, method='rf')
 
 # exploratory analysis ----------------------------------------------------
 
+factorcolumns  <- lapply(t2,function(x) if(is.factor(x)) levels(x)  )
+
 # due to goofiness, these came across as factors, rather than numeric
    # fix them up
 training$kurtosis_roll_belt <- as.numeric(as.character(training$kurtosis_roll_belt))
