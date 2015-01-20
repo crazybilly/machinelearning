@@ -13,16 +13,45 @@ if (!exists('training')) {
 # kitchen sink analsysis for a baseline ------------------------------------------
    # here we're getting 78% accuracy, which is nothing to sneeze at
 modelrpart  <- train(classe ~ ., data = training,method='rpart')
+   # 
+modelrf  <- train(classe ~ ., data = training, method='rf')
 
 
 # exploratory analysis ----------------------------------------------------
+
+# due to goofiness, these came across as factors, rather than numeric
+   # fix them up
+training$kurtosis_roll_belt <- as.numeric(as.character(training$kurtosis_roll_belt))
+training$skewness_roll_belt <- as.numeric(as.character(training$skewness_roll_belt))
+training$max_yaw_belt <- as.numeric(as.character(training$max_yaw_belt))
+training$min_yaw_belt <- as.numeric(as.character(training$min_yaw_belt))
+training$amplitude_yaw_belt <- as.numeric(as.character(training$amplitude_yaw_belt))
+training$kurtosis_yaw_arm <- as.numeric(as.character(training$kurtosis_yaw_arm))
+training$skewness_yaw_arm <- as.numeric(as.character(training$skewness_yaw_arm))
+training$kurtosis_roll_dumbbell <- as.numeric(as.character(training$kurtosis_roll_dumbbell))
+training$kurtosis_picth_dumbbell <- as.numeric(as.character(training$kurtosis_picth_dumbbell))
+training$skewness_roll_dumbbell <- as.numeric(as.character(training$skewness_roll_dumbbell))
+training$skewness_pitch_dumbbell <- as.numeric(as.character(training$skewness_pitch_dumbbell))
+training$max_yaw_dumbbell <- as.numeric(as.character(training$max_yaw_dumbbell))
+training$min_yaw_dumbbell <- as.numeric(as.character(training$min_yaw_dumbbell))
+training$amplitude_yaw_dumbbell <- as.numeric(as.character(training$amplitude_yaw_dumbbell))
 
 
 # what percent of the column is useless data (either NA, an empty string or our old Excel friend "DIV/O")
 percentNA  <- apply(training,2,function(x) sum(is.na(x) | grepl("DIV\\/0",x) | grepl("$^",x))/length(x)  )
 
-# keep the columns that are at least 30% full of useful data
-columnstouse  <- percentNA <.7
+# dump the columns that are 98% empty data
+columnstouse  <- percentNA < .98
+# nix the useless columns (dates & time stamps, row indexes)
+columnstouse[1]  <- F # X
+columnstouse[3]  <- F # raw_timestamp_part_1
+columnstouse[4]  <- F # raw_timestamp_part_2
+columnstouse[5]  <- F # cvtd_timestamp
+columnstouse[6]  <- F # new_window
+columnstouse[7]  <- F # num_window
+
+
+t2  <- training[,columnstouse]
 
 
 # rpart2 ------------------------------------------------------------------
@@ -51,5 +80,38 @@ modelpart2  <- train(classe ~
                         magnet_forearm_y + magnet_forearm_z +  magnet_forearm_z
                      , data = training,method='rpart')
 
+
+# rpart3 ------------------------------------------------------------------
+
+
+
+modrf3  <- train(t2[,1:134],t2$classe,method='rf')
+
+# notes -------------------------------------------------------------------
+
+# X is just the index. It is not a predictor, so drop it.
+# the timestamps aren't relevant.
+   training$raw_timestamp_part_1
+   training$raw_timestamp_part_2
+   training$cvtd_timestamp
+# no clue what these window things are, but they're largely useless too
+   training$num_window
+   training$new_window
+
+# came over as factors, but should be numeric
+kurtosis_roll_belt
+skewness_roll_belt
+max_yaw_belt
+min_yaw_belt
+amplitude_yaw_belt
+kurtosis_yaw_arm
+skewness_yaw_arm
+kurtosis_roll_dumbbell
+kurtosis_picth_dumbbell
+skewness_roll_dumbbell
+skewness_pitch_dumbbell
+max_yaw_dumbbell
+min_yaw_dumbbell
+amplitude_yaw_dumbbell
 
 
