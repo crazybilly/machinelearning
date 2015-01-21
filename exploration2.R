@@ -2,6 +2,7 @@
 
 library(muadc); library(dplyr); library(tidyr); 
 library(stringr); library(lubridate); library(magrittr); 
+library(caret)
 
 # data --------------------------------------------
 
@@ -10,7 +11,7 @@ if( !exists('training')) {
 }
 
 
-segment  <- createDataPartition(training$classe,p=.75,list=F)
+segment  <- createDataPartition(training$classe,p=.8,list=F)
 
 train  <- training[segment, ]
 test   <- training[-segment,]
@@ -34,7 +35,7 @@ t2  <- train[,!useless]
 t3m  <- apply(t2[,1:ncol(t2)-1],2,function(x) as.numeric(as.character(x)))
 t3  <- as.data.frame.matrix(t3m)
 t3$classe  <- t2$classe
-   
+Q   
 
 
 # identify zeroVariation columns ------------------------------------------
@@ -43,4 +44,13 @@ nearZero  <- nearZeroVar(t3)
 t4  <- t3[,-nearZero]
 
 
+# scale and center --------------------------------------------------------
 
+scalingfunction  <- preProcess(t4[,1:122])
+t5  <- predict(scalingfunction,t4)
+   t5$classe  <- t4$classe
+
+
+# functional columns ------------------------------------------------------
+
+fea
