@@ -1,6 +1,6 @@
 # libraries ---------------------------------------
 
-library(muadc); 
+library(muadc);  # available at http://github.com/crazybilly/muadc
 library(dplyr); library(tidyr); 
 library(stringr); library(lubridate); library(magrittr); 
 

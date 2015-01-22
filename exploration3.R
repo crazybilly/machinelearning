@@ -21,21 +21,22 @@ test   <- training[-segment,]
 
 
 uselessnames  <- c(  "X", "user_name"
-                  , "raw_timestamp_part_1", "raw_timestamp_part_2"
-                  , "cvtd_timestamp"
-                  , "new_window", "num_window"
-                   )
+                     , "raw_timestamp_part_1", "raw_timestamp_part_2"
+                     , "cvtd_timestamp"
+                     , "new_window", "num_window"
+)
 useless  <- sapply(names(train),function(x) {as.logical(sum(x == uselessnames))})  %>% 
    as.vector
-t2  <- train[,!useless] 
+t2 <- train[,!useless] 
 
 
-# convert factor vars to numeric ------------------------------------------
+# numeric to factors ------------------------------------------------------
+
 
 t3m  <- apply(t2[,1:ncol(t2)-1],2,function(x) as.numeric(as.character(x)))
 t3  <- as.data.frame.matrix(t3m)
 t3$classe  <- t2$classe
-   
+
 
 
 # identify zeroVariation columns ------------------------------------------
@@ -44,13 +45,10 @@ nearZero  <- nearZeroVar(t3)
 t4  <- t3[,-nearZero]
 
 
-# scale and center --------------------------------------------------------
+# percent NA --------------------------------------------------------------
 
-scalingfunction  <- preProcess(t4[,1:122])
-t5  <- predict(scalingfunction,t4)
-   t5$classe  <- t4$classe
+percentNA  <- apply(t4,2,function(x) sum(is.na(x) | grepl("DIV\\/0",x) | grepl("$^",x))/length(x)  )
+percentNAindex  <- percentNA < .97
 
+t5  <- t4[,percentNAindex]
 
-# functional columns ------------------------------------------------------
-
-fea
