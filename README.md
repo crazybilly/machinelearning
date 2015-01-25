@@ -28,9 +28,11 @@ These columns were ignorned when building the model, as they didn't provide usef
 
 ### Zero Variance
 
-Many of the remaning columns provided little to no variance and could be ignored in the model, reducing variance in the final model. For the sake of clarity in the plot below, I have scaled and centered the training data, then plotted the variance for each column on the y axis--clearly most columns do not provide adequate variation for prediction.
+Many of the remaning columns provided little to no variance and could be ignored in the model. For the sake of clarity in the plot below, I have scaled and centered the training data, then plotted the variance for each column on the y axis--clearly most columns do not provide adequate variation for prediction.
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+Columns with no variance were removed from the model. 
 
 ### Null values
 
@@ -57,15 +59,15 @@ Then I trained the model using Random Forest with the following formula:
     accel_forearm_y + accel_forearm_z + magnet_forearm_x + magnet_forearm_y + 
     magnet_forearm_z, data = trainingsegment)`
 
-The model reported a 99% accuracy on the training data as well as on the validation data, using  52 variables. The figure below illustrates the importance of each.
+The model predicted 99% of the training data accurately, and performed just as well on the validation data, using 52 variables. The figure below illustrates the importance of each.
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
 
-Further detail is available in the `model.R` script.
+Further detail about model creation is available in the `model.R` script.
 
 ## Cross Validation
 
-In order to further validate my model, I tested it with 10-fold cross validation.
+In order to further validate my model, I tested it with 10-fold cross validation, creating 10 folds and testing the model's accuracy on each fold.
 
 The overall prediction rate for each fold was over 99%, with an average accuracy of 99.903% and an average Kappa of 99.877%--see the plot below showing accuracy on the y axis (note that the y axis scale starts at 90%).
 
@@ -74,4 +76,3 @@ Given an average of 99.9% accuracy across 10 folds of 1962 entries each, we can 
 The code to perform this validation is available in `crossvalidation.R`.
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
-
